@@ -3,7 +3,7 @@
     "productName": "Image resize productName",
     "version": "1.0.0",
     "description": "App use for resize images",
-    "main": "dist/main.js",
+    "main": "src/main.js",
     "scripts": {
         "test": "npm run build && npm start",
         "start": "electron .",

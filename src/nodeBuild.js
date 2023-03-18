@@ -33,26 +33,6 @@ const { readdir } = require("fs/promises");
 
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     console.log("Deleting *.ts files...");
-    const findByExtension = async (dir, ext) => {
-        const matchedFiles = [];
-
-        const files = await readdir(dir);
-
-        for (const file of files) {
-            // Method 1:
-            const fileExt = path.extname(file);
-            if (fileExt === `.${ext}`) {
-                matchedFiles.push(path.join(dir, file));
-            } else if (fileExt === ``) {
-                // File now is directory
-                const filesInDirectory = await findByExtension(path.join(dir, file), ext);
-
-                matchedFiles.push(...filesInDirectory);
-            }
-        }
-
-        return matchedFiles;
-    };
     const findFiles = async (dir, cb) => {
         const matchedFiles = [];
 
@@ -77,9 +57,7 @@ const { readdir } = require("fs/promises");
 
         return matchedFiles;
     };
-
-    let files = await findFiles(distPath, (fileName, fileExt) => fileExt === "ts");
-    // let files = await findByExtension(distPath, "ts");
+    let files = await findFiles(distPath, (fileName, fileExt) => fileExt === ".ts");
     files.forEach((r) => fs.unlinkSync(r));
 
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
