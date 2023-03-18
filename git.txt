@@ -1,0 +1,15 @@
+git add .
+git commit -m "Update"
+git pull origin main
+git push origin HEAD
+
+
+rmdir /s/q .git
+git init
+git add .
+git remote add origin https://github.com/minhquan1313/imgresize.git
+git branch -M main
+git commit -m "Overwrite"
+git push -u origin +main
+cls
+git remote -v
