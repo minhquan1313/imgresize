@@ -25,8 +25,8 @@ function createMainWindow() {
 function createAboutWindow() {
     const mainWindow = new BrowserWindow({
         title: "About Image Resize",
-        width: 1000,
-        height: 900,
+        width: 500,
+        height: 500,
     });
 
     mainWindow.loadFile(templatesDir.about);
