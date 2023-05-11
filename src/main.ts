@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, MenuItemConstructorOptions } from "electron";
+import { app, BrowserWindow, ipcMain, Menu, MenuItemConstructorOptions, shell } from "electron";
 import fs from "fs";
 import os from "os";
 import path from "path";
@@ -11,11 +11,12 @@ const templatesDir = {
 };
 const isMac = process.platform === "darwin";
 const isDev = process.env.NODE_ENV !== "production";
+let mainWindow: BrowserWindow;
 
 function createMainWindow() {
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         title: "Image Resize",
-        width: 900,
+        width: 1100,
         height: 600,
 
         webPreferences: {
@@ -47,43 +48,43 @@ app.whenReady().then(() => {
 
     createMainWindow();
 
-    const menu: MenuItemConstructorOptions[] = [
-        {
-            label: "File",
-            submenu: [
-                {
-                    label: "Quit",
-                    click: app.quit,
-                    accelerator: "CmdOrCtrl+W",
-                },
-            ],
-        },
-        ...(isMac
-            ? [
-                  {
-                      label: app.name,
-                      submenu: [
-                          {
-                              label: "About",
-                              click: createAboutWindow,
-                          },
-                      ],
-                  },
-              ]
-            : [
-                  {
-                      label: "Help",
-                      submenu: [
-                          {
-                              label: "About",
-                              click: createAboutWindow,
-                          },
-                      ],
-                  },
-              ]),
-    ];
-    const mainMenu = Menu.buildFromTemplate(menu);
-    Menu.setApplicationMenu(mainMenu);
+    // const menu: MenuItemConstructorOptions[] = [
+    //     {
+    //         label: "File",
+    //         submenu: [
+    //             {
+    //                 label: "Quit",
+    //                 click: app.quit,
+    //                 accelerator: "CmdOrCtrl+W",
+    //             },
+    //         ],
+    //     },
+    //     ...(isMac
+    //         ? [
+    //               {
+    //                   label: app.name,
+    //                   submenu: [
+    //                       {
+    //                           label: "About",
+    //                           click: createAboutWindow,
+    //                       },
+    //                   ],
+    //               },
+    //           ]
+    //         : [
+    //               {
+    //                   label: "Help",
+    //                   submenu: [
+    //                       {
+    //                           label: "About",
+    //                           click: createAboutWindow,
+    //                       },
+    //                   ],
+    //               },
+    //           ]),
+    // ];
+    // const mainMenu = Menu.buildFromTemplate(menu);
+    // Menu.setApplicationMenu(mainMenu);
 
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
@@ -91,20 +92,25 @@ app.whenReady().then(() => {
 });
 
 ipcMain.on("image:resize", (e, opts: IImageResizeOpts) => {
+    console.log("calling image:resize");
+
     const _opts = { ...opts, dest: path.join(os.homedir(), "imageresizer") };
+    console.log(_opts);
+
     resizeImage(_opts);
 });
+
 async function resizeImage({ imgPath, height, width, dest }: Required<IImageResizeOpts>) {
     try {
         const newPath = await resizeImg(fs.readFileSync(imgPath), {
             width,
             height,
         });
-        const fileName = path.basename(imgPath);
-
-        if (!fs.existsSync(dest)) fs.mkdirSync(dest);
-
-        fs.writeFileSync(path.join(dest, fileName), newPath);
+        // const fileName = path.basename(imgPath);
+        // if (!fs.existsSync(dest)) fs.mkdirSync(dest);
+        // fs.writeFileSync(path.join(dest, fileName), newPath);
+        // mainWindow.webContents.send("image:done");
+        // shell.openPath(dest);
     } catch (error) {
         console.log(error);
     }

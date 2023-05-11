@@ -13,8 +13,8 @@ contextBridge.exposeInMainWorld("toast", {
     show: (options: Toastify.Options) => Toastify(options).showToast(),
 });
 contextBridge.exposeInMainWorld("ipcRenderer", {
-    send: ipcRenderer.send,
-    on: ipcRenderer.on,
+    send: (channel: string, data: any) => ipcRenderer.send(channel, data),
+    on: (channel: string, cb: (data: any) => void) => ipcRenderer.on(channel, (e, data) => cb(data)),
 });
 
 declare global {
@@ -28,8 +28,8 @@ declare global {
         show: (options: Toastify.Options) => void;
     };
     const ipcRenderer: {
-        send: IpcRenderer["send"];
-        on: IpcRenderer["on"];
+        send: (channel: string, data: any) => void;
+        on: (channel: string, cb: (data: any) => void) => void;
     };
 }
 

@@ -70,7 +70,9 @@ function resizeImage(e: Event) {
 }
 
 // When done, show message
-// ipcRenderer.on("image:done", () => alertSuccess(`Image resized to ${heightInput.value} x ${widthInput.value}`));
+ipcRenderer.on("image:done", () => {
+    alertSuccess(`Image resized to ${heightInput.value} x ${widthInput.value}`);
+});
 
 function alertSuccess(message: string) {
     toast.show({
