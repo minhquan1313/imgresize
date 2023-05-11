@@ -1,3 +1,5 @@
+import { IImageResizeOpts } from "../../types/IImageResizeOpts";
+
 const form = document.querySelector<HTMLFormElement>("#img-form")!;
 const img = document.querySelector<HTMLInputElement>("#img")!;
 const outputPath = document.querySelector<HTMLDivElement>("#output-path")!;
@@ -37,35 +39,41 @@ function isFileImage(file: File) {
 
 // Resize image
 function resizeImage(e: Event) {
-    e.preventDefault();
+    try {
+        e.preventDefault();
 
-    if (!img.files?.[0]) {
-        alertError("Please upload an image");
-        return;
+        if (!img.files?.[0]) {
+            alertError("Please upload an image");
+            return;
+        }
+
+        if (widthInput.value === "" || heightInput.value === "") {
+            alertError("Please enter a width and height");
+            return;
+        }
+
+        // Electron adds a bunch of extra properties to the file object including the path
+        const imgPath = img.files[0].path;
+        const width = +widthInput.value;
+        const height = +heightInput.value;
+
+        const opts: IImageResizeOpts = {
+            imgPath,
+            height,
+            width,
+        };
+
+        ipcRenderer.send("image:resize", opts);
+    } catch (error) {
+        // alertError(error);
     }
-
-    if (widthInput.value === "" || heightInput.value === "") {
-        alertError("Please enter a width and height");
-        return;
-    }
-
-    // Electron adds a bunch of extra properties to the file object including the path
-    const imgPath = img.files[0].path;
-    const width = widthInput.value;
-    const height = heightInput.value;
-
-    // ipcRenderer.send("image:resize", {
-    //     imgPath,
-    //     height,
-    //     width,
-    // });
 }
 
 // When done, show message
 // ipcRenderer.on("image:done", () => alertSuccess(`Image resized to ${heightInput.value} x ${widthInput.value}`));
 
 function alertSuccess(message: string) {
-    Toastify({
+    toast.show({
         text: message,
         duration: 5000,
         close: false,
@@ -74,11 +82,11 @@ function alertSuccess(message: string) {
             color: "white",
             textAlign: "center",
         },
-    }).showToast();
+    });
 }
 
 function alertError(message: string) {
-    Toastify({
+    toast.show({
         text: message,
         duration: 5000,
         close: false,
@@ -87,7 +95,7 @@ function alertError(message: string) {
             color: "white",
             textAlign: "center",
         },
-    }).showToast();
+    });
 }
 
 // File select listener
