@@ -1,5 +1,4 @@
 import { app, BrowserWindow, Menu, MenuItemConstructorOptions } from "electron";
-import { MenuItem } from "electron/main";
 import path from "path";
 
 const templatesDir = {
@@ -7,25 +6,31 @@ const templatesDir = {
     about: path.join(__dirname, "templates", "about.html"),
 };
 const isMac = process.platform === "darwin";
-const isProduction = process.env.NODE_ENV === "production";
+const isDev = process.env.NODE_ENV !== "production";
 
 function createMainWindow() {
     const mainWindow = new BrowserWindow({
         title: "Image Resize",
-        width: 1000,
-        height: 900,
+        width: 900,
+        height: 600,
+        webPreferences: {
+            contextIsolation: true,
+            nodeIntegration: true,
+            preload: path.join(__dirname, "preload.js"),
+        },
     });
 
-    if (!isProduction) {
+    if (isDev) {
         mainWindow.webContents.openDevTools();
     }
 
     mainWindow.loadFile(templatesDir.main);
 }
+
 function createAboutWindow() {
     const mainWindow = new BrowserWindow({
         title: "About Image Resize",
-        width: 500,
+        width: 600,
         height: 500,
     });
 

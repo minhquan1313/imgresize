@@ -7,6 +7,7 @@
     "scripts": {
         "test": "npm run build && npm start",
         "start": "electron .",
+        "startWatch": "npx electronmon .",
         "build": "node src/nodeBuild.js",
         "ts": "tsc --watch",
         "tailwind": "npx tailwindcss -i ./src/templates/assets/tailwind.css -o ./src/templates/assets/main.css --watch --minify"
