@@ -2,25 +2,62 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Image Resizer html</title>
-
-        <link rel="stylesheet" href="./assets/main.css" />
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="assets/main.css" />
         <script src="js/renderer.js" defer></script>
+        <title>ImageResizer</title>
     </head>
-    <body>
-        <h1 class="flex">Img changer</h1>
+    <body class="bg-teal-700">
+        <div class="align-center m-auto flex h-screen max-w-xl flex-col justify-center">
+            <div class="bg-grey-lighter flex w-full flex-col items-center justify-center">
+                <label
+                    class="border-blue flex w-64 cursor-pointer flex-col items-center rounded-lg border bg-white px-4 py-7 uppercase tracking-wide text-gray-500 shadow-lg hover:text-teal-800"
+                >
+                    <img src="./images/logo.svg" width="32" />
+                    <span class="mt-2 leading-normal">Select an image to resize</span>
+                    <input id="img" type="file" class="hidden" />
+                </label>
+            </div>
 
-        <input type="file" name="image" id="image" accept=".jpeg, .jpg" />
+            <!-- Form -->
+            <form id="img-form" class="hidden">
+                <div class="mt-6">
+                    <label class="m-auto mt-1 block w-80 rounded-md border-gray-300 py-3 text-center text-white shadow-sm">Width</label>
+                    <input
+                        type="number"
+                        name="width"
+                        id="width"
+                        class="m-auto mt-1 block w-80 rounded-md border-gray-300 p-3 shadow-sm"
+                        placeholder="Width"
+                    />
+                </div>
 
-        <div>
-            <p>Preview</p>
-            <img
-                class="w-full object-contain"
-                src="https://economictimes.indiatimes.com/thumb/height-450,width-600,imgsize-34182,msid-93429238/international-cat-day-2022-all-you-need-to-know-about-date-significance-history.jpg"
-                alt=""
-            />
+                <div class="mt-4">
+                    <label class="m-auto mt-1 block w-80 rounded-md border-gray-300 py-3 text-center text-white shadow-sm">Height</label>
+                    <input
+                        type="number"
+                        name="height"
+                        id="height"
+                        class="m-auto mt-1 block w-80 rounded-md border-gray-300 p-3 shadow-sm"
+                        placeholder="Height"
+                    />
+                </div>
+
+                <!-- Button -->
+                <div class="mt-6">
+                    <button
+                        type="submit"
+                        class="m-auto flex w-80 justify-center rounded-md border border-transparent bg-teal-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                        Resize
+                    </button>
+                </div>
+            </form>
+
+            <p class="mt-6 text-center font-mono text-lg text-white"><strong>File: </strong><span id="filename"></span></p>
+            <p class="mt-2 text-center font-mono text-lg text-white"><strong>Output: </strong><span id="output-path"></span></p>
         </div>
     </body>
 </html>
