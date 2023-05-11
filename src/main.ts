@@ -34,6 +34,7 @@ function createAboutWindow() {
 
 app.whenReady().then(() => {
     console.log("Starting...");
+
     createMainWindow();
 
     const menu: MenuItemConstructorOptions[] = [
