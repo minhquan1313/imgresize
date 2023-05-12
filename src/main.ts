@@ -9,6 +9,8 @@ const templatesDir = {
     main: path.join(__dirname, "templates", "index.html"),
     about: path.join(__dirname, "templates", "about.html"),
 };
+
+// process.env.NODE_ENV = "production";
 const isMac = process.platform === "darwin";
 const isDev = process.env.NODE_ENV !== "production";
 let mainWindow: BrowserWindow;
@@ -16,9 +18,10 @@ let mainWindow: BrowserWindow;
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         title: "Image Resize",
-        width: 1100,
-        height: 600,
-
+        width: isDev ? 1000 : 500,
+        // height: 700,
+        minHeight: 700,
+        minWidth: 500,
         webPreferences: {
             contextIsolation: true,
             nodeIntegration: true,
@@ -27,6 +30,8 @@ function createMainWindow() {
     });
 
     if (isDev) {
+        console.log("dev");
+
         mainWindow.webContents.openDevTools();
     }
 
@@ -34,13 +39,13 @@ function createMainWindow() {
 }
 
 function createAboutWindow() {
-    const mainWindow = new BrowserWindow({
+    const aboutWindow = new BrowserWindow({
         title: "About Image Resize",
         width: 600,
         height: 500,
     });
 
-    mainWindow.loadFile(templatesDir.about);
+    aboutWindow.loadFile(templatesDir.about);
 }
 
 app.whenReady().then(() => {
@@ -48,43 +53,47 @@ app.whenReady().then(() => {
 
     createMainWindow();
 
-    // const menu: MenuItemConstructorOptions[] = [
-    //     {
-    //         label: "File",
-    //         submenu: [
-    //             {
-    //                 label: "Quit",
-    //                 click: app.quit,
-    //                 accelerator: "CmdOrCtrl+W",
-    //             },
-    //         ],
-    //     },
-    //     ...(isMac
-    //         ? [
-    //               {
-    //                   label: app.name,
-    //                   submenu: [
-    //                       {
-    //                           label: "About",
-    //                           click: createAboutWindow,
-    //                       },
-    //                   ],
-    //               },
-    //           ]
-    //         : [
-    //               {
-    //                   label: "Help",
-    //                   submenu: [
-    //                       {
-    //                           label: "About",
-    //                           click: createAboutWindow,
-    //                       },
-    //                   ],
-    //               },
-    //           ]),
-    // ];
-    // const mainMenu = Menu.buildFromTemplate(menu);
-    // Menu.setApplicationMenu(mainMenu);
+    const menu: MenuItemConstructorOptions[] = [
+        {
+            label: "File",
+            submenu: [
+                {
+                    label: "Quit",
+                    click: app.quit,
+                    accelerator: "CmdOrCtrl+W",
+                },
+            ],
+        },
+        ...(isMac
+            ? [
+                  {
+                      label: app.name,
+                      submenu: [
+                          {
+                              label: "About",
+                              click: createAboutWindow,
+                          },
+                      ],
+                  },
+              ]
+            : [
+                  {
+                      label: "Help",
+                      submenu: [
+                          {
+                              label: "About",
+                              click: createAboutWindow,
+                          },
+                      ],
+                  },
+              ]),
+    ];
+    const mainMenu = Menu.buildFromTemplate(menu);
+    Menu.setApplicationMenu(mainMenu);
+
+    mainWindow.on("close", (r) => {
+        (mainWindow as any) = null;
+    });
 
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
@@ -102,15 +111,20 @@ ipcMain.on("image:resize", (e, opts: IImageResizeOpts) => {
 
 async function resizeImage({ imgPath, height, width, dest }: Required<IImageResizeOpts>) {
     try {
+        console.log("resizeImage");
+
         const newPath = await resizeImg(fs.readFileSync(imgPath), {
             width,
             height,
         });
-        // const fileName = path.basename(imgPath);
-        // if (!fs.existsSync(dest)) fs.mkdirSync(dest);
-        // fs.writeFileSync(path.join(dest, fileName), newPath);
-        // mainWindow.webContents.send("image:done");
-        // shell.openPath(dest);
+
+        const fileName = path.basename(imgPath);
+        if (!fs.existsSync(dest)) fs.mkdirSync(dest);
+        fs.writeFileSync(path.join(dest, fileName), newPath);
+
+        shell.openPath(dest);
+
+        mainWindow.webContents.send("image:done");
     } catch (error) {
         console.log(error);
     }

@@ -1,11 +1,10 @@
-import { IImageResizeOpts } from "../../types/IImageResizeOpts";
-
 const form = document.querySelector<HTMLFormElement>("#img-form")!;
 const img = document.querySelector<HTMLInputElement>("#img")!;
 const outputPath = document.querySelector<HTMLDivElement>("#output-path")!;
 const filename = document.querySelector<HTMLDivElement>("#filename")!;
 const heightInput = document.querySelector<HTMLInputElement>("#height")!;
 const widthInput = document.querySelector<HTMLInputElement>("#width")!;
+const submitBtn = document.querySelector<HTMLButtonElement>("#submit");
 
 // Load image and show form
 function loadImage() {
@@ -40,6 +39,8 @@ function isFileImage(file: File) {
 // Resize image
 function resizeImage(e: Event) {
     try {
+        submitBtn!.disabled = true;
+        // submitBtn?.t = "hi";
         e.preventDefault();
 
         if (!img.files?.[0]) {
@@ -57,7 +58,7 @@ function resizeImage(e: Event) {
         const width = +widthInput.value;
         const height = +heightInput.value;
 
-        const opts: IImageResizeOpts = {
+        const opts = {
             imgPath,
             height,
             width,
@@ -72,6 +73,7 @@ function resizeImage(e: Event) {
 // When done, show message
 ipcRenderer.on("image:done", () => {
     alertSuccess(`Image resized to ${heightInput.value} x ${widthInput.value}`);
+    submitBtn!.disabled = false;
 });
 
 function alertSuccess(message: string) {
