@@ -4,15 +4,18 @@ import os from "os";
 import path from "path";
 import resizeImg from "resize-img";
 import { IImageResizeOpts } from "./types/IImageResizeOpts";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const templatesDir = {
     main: path.join(__dirname, "templates", "index.html"),
     about: path.join(__dirname, "templates", "about.html"),
 };
 
-process.env.NODE_ENV = "production";
+console.log(process.env);
+
 const isMac = process.platform === "darwin";
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.MODE !== "production";
 let mainWindow: BrowserWindow;
 
 function createMainWindow() {
