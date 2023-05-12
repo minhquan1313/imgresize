@@ -10,7 +10,7 @@ const templatesDir = {
     about: path.join(__dirname, "templates", "about.html"),
 };
 
-// process.env.NODE_ENV = "production";
+process.env.NODE_ENV = "production";
 const isMac = process.platform === "darwin";
 const isDev = process.env.NODE_ENV !== "production";
 let mainWindow: BrowserWindow;
